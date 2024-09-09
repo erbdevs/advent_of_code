@@ -1,9 +1,10 @@
 require_relative "possible_games_finder.rb"
 
 RSpec.describe PossibleGamesFinder do
-  describe ".identify" do
+  describe ".possible_games" do
     subject do
-      described_class.possible_games(red: possible_reds, green: possible_greens, blue: possible_blues, file_content:)
+      described_class.new(file_content:)
+                     .possible_games(red: possible_reds, green: possible_greens, blue: possible_blues)
     end
 
     context "1" do
@@ -47,6 +48,20 @@ RSpec.describe PossibleGamesFinder do
 
       it do
         expect(subject).to eq(1)
+      end
+    end
+  end
+
+  describe ".power" do
+    subject do
+      described_class.new(file_content:).power
+    end
+
+    context "2" do
+      let(:file_content) { "Game 1: 2 red; 2 blue; 2 green" }
+
+      it do
+        expect(subject).to eq(8)
       end
     end
   end

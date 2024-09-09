@@ -1,18 +1,13 @@
 class PossibleGamesFinder
-  def self.possible_games(red:, green:, blue:, file_content:)
-    new(red:, green:, blue:, file_content:).possible_games
-  end
+  Game = Struct.new(:id, :max_red_cubes, :max_green_cubes, :max_blue_cubes)
 
-  def initialize(red:, green:, blue:, file_content:)
-    @red = red 
-    @green = green
-    @blue = blue
+  def initialize(file_content:)
     @file_content = file_content
   end
 
-  def possible_games
+  def possible_games(red:, green:, blue:)
     games.sum do |game|
-      if valid_game?(game)
+      if valid_game?(game, red, green, blue)
         game.id
       else
         0
@@ -20,10 +15,15 @@ class PossibleGamesFinder
     end
   end
 
+  def power
+    games.sum do |game|
+      game.max_red_cubes * game.max_green_cubes * game.max_blue_cubes
+    end
+  end
 
 private
 
-  attr_reader :red, :green, :blue, :file_content
+  attr_reader :file_content
 
   def games
     @games ||= file_content.each_line.map do |line|
@@ -46,13 +46,11 @@ private
     end
   end
 
-  def valid_game?(game)
+  def valid_game?(game, red, green, blue)
     return false if game.max_red_cubes > red
     return false if game.max_green_cubes > green
     return false if game.max_blue_cubes > blue
 
     true
   end
-
-  Game = Struct.new(:id, :max_red_cubes, :max_green_cubes, :max_blue_cubes)
 end
